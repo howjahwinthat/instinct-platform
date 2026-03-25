@@ -57,9 +57,17 @@ export async function getQuizScore(lessonId: string): Promise<number | undefined
 }
 
 export async function getCourseProgress(courseId: string, totalLessons: number): Promise<number> {
-  const { completedLessons } = await getUserProgress();
-  const completedInCourse = completedLessons.filter(id => id.includes(courseId)).length;
-  return totalLessons > 0 ? Math.round((completedInCourse / totalLessons) * 100) : 0;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return 0;
+
+  const { data, count } = await supabase
+    .from('lesson_progress')
+    .select('*', { count: 'exact' })
+    .eq('user_id', user.id)
+    .eq('course_id', courseId);
+
+  const completed = count || 0;
+  return totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
 }
 
 export async function getUnitProgress(unitLessons: string[]): Promise<number> {

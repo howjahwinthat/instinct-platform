@@ -5,6 +5,7 @@ import { UnitDetailPage } from './pages/UnitDetailPage';
 import { LessonPage } from './pages/LessonPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
+import { DashboardPage } from './pages/DashboardPage';
 import { CourseLayout } from './components/CourseLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -22,6 +23,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <HomePage />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/dashboard',
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
       </ProtectedRoute>
     )
   },

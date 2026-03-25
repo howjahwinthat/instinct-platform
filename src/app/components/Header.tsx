@@ -34,7 +34,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
   const coursesRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
-  // Close search results when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -51,7 +50,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Search functionality
   useEffect(() => {
     if (searchQuery.trim().length < 2) {
       setSearchResults([]);
@@ -62,8 +60,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
     const results: SearchResult[] = [];
 
     courses.forEach(course => {
-      // Search in course titles
-      if (course.title.toLowerCase().includes(query) || 
+      if (course.title.toLowerCase().includes(query) ||
           course.description.toLowerCase().includes(query)) {
         results.push({
           type: 'course',
@@ -73,9 +70,8 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
         });
       }
 
-      // Search in units
       course.units.forEach(unit => {
-        if (unit.title.toLowerCase().includes(query) || 
+        if (unit.title.toLowerCase().includes(query) ||
             unit.description.toLowerCase().includes(query)) {
           results.push({
             type: 'unit',
@@ -87,7 +83,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
           });
         }
 
-        // Search in lessons
         unit.lessons.forEach(lesson => {
           if (lesson.title.toLowerCase().includes(query)) {
             results.push({
@@ -105,7 +100,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
       });
     });
 
-    setSearchResults(results.slice(0, 8)); // Limit to 8 results
+    setSearchResults(results.slice(0, 8));
   }, [searchQuery]);
 
   const handleResultClick = (path: string) => {
@@ -133,15 +128,15 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
       <div className="flex items-center justify-between px-4 h-[60px]">
         <div className="flex items-center gap-4">
           {showMenuButton && (
-            <button 
+            <button
               onClick={onMenuClick}
               className="lg:hidden p-2 hover:bg-gray-700 rounded"
             >
               <Menu className="w-5 h-5" />
             </button>
           )}
-          
-          <button 
+
+          <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2 hover:opacity-80"
           >
@@ -150,7 +145,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
           </button>
 
           <div className="relative hidden md:block" ref={coursesRef}>
-            <button 
+            <button
               onClick={() => setShowCoursesDropdown(!showCoursesDropdown)}
               className="flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
             >
@@ -193,7 +188,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
             />
             {showResults && searchResults.length > 0 && (
               <div className="absolute left-0 top-full w-full bg-gray-800 border border-gray-600 rounded-b-md z-10 mt-1 shadow-lg max-h-96 overflow-y-auto">
-                {searchResults.map((result, index) => (
+                {searchResults.map((result) => (
                   <div
                     key={result.path}
                     className="px-4 py-3 cursor-pointer hover:bg-gray-700 border-b border-gray-700 last:border-b-0"
@@ -239,8 +234,8 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
 
         <div className="flex items-center gap-3">
           <div className="relative" ref={userRef}>
-            <div 
-              className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 px-3 py-2 rounded" 
+            <div
+              className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 px-3 py-2 rounded"
               onClick={() => setShowUserDropdown(!showUserDropdown)}
             >
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
@@ -257,7 +252,15 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
                   <div className="text-sm font-medium">{profile?.name}</div>
                   <div className="text-xs text-gray-400">{profile?.email}</div>
                 </div>
-                <div 
+                <Link
+                  to="/dashboard"
+                  className="px-4 py-3 hover:bg-gray-700 flex items-center gap-2"
+                  onClick={() => setShowUserDropdown(false)}
+                >
+                  <User className="w-4 h-4" />
+                  <span>Dashboard</span>
+                </Link>
+                <div
                   className="px-4 py-3 cursor-pointer hover:bg-gray-700 flex items-center gap-2"
                   onClick={handleLogout}
                 >
