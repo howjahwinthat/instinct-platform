@@ -17,7 +17,7 @@ export function LessonPage() {
   const lesson = getLessonById(courseId || '', unitId || '', lessonId || '');
 
   useEffect(() => {
-    setCompleted(isLessonComplete(lessonId || ''));
+    isLessonComplete(lessonId || '').then(setCompleted);
   }, [lessonId]);
 
   if (!course || !unit || !lesson) {
@@ -28,16 +28,16 @@ export function LessonPage() {
   const nextLesson = unit.lessons[currentLessonIndex + 1];
   const prevLesson = unit.lessons[currentLessonIndex - 1];
 
-  const handleMarkComplete = () => {
+  const handleMarkComplete = async () => {
     if (lesson.id) {
-      markLessonComplete(lesson.id);
+      await markLessonComplete(lesson.id, courseId || '', unitId || '');
       setCompleted(true);
     }
   };
 
-  const handleQuizComplete = (score: number) => {
+  const handleQuizComplete = async (score: number) => {
     if (lesson.id) {
-      saveQuizScore(lesson.id, score);
+      await saveQuizScore(lesson.id, courseId || '', score);
       setCompleted(true);
     }
   };
@@ -46,7 +46,6 @@ export function LessonPage() {
     if (nextLesson) {
       navigate(`/course/${courseId}/unit/${unitId}/lesson/${nextLesson.id}`);
     } else {
-      // Find next unit
       const currentUnitIndex = course.units.findIndex(u => u.id === unitId);
       const nextUnit = course.units[currentUnitIndex + 1];
       if (nextUnit) {
@@ -68,7 +67,6 @@ export function LessonPage() {
   return (
     <div className="min-h-full bg-gray-50">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm mb-6">
           <Link to="/" className="text-blue-600 hover:underline">Home</Link>
           <span className="text-gray-400">›</span>
@@ -83,7 +81,6 @@ export function LessonPage() {
           <span className="text-gray-600">{lesson.title}</span>
         </nav>
 
-        {/* Lesson Header */}
         <div className="mb-8">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
@@ -101,11 +98,9 @@ export function LessonPage() {
           </div>
         </div>
 
-        {/* Lesson Content */}
         {lesson.type === 'article' && lesson.content && (
           <div className="bg-white rounded-lg border border-gray-200 p-8 mb-8">
             <MarkdownRenderer content={lesson.content} />
-            
             {!completed && (
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <Button onClick={handleMarkComplete} size="lg">
@@ -123,7 +118,6 @@ export function LessonPage() {
               <p className="text-gray-500 mb-4">This lesson content is coming soon.</p>
               <p className="text-sm text-gray-400">We're working on creating comprehensive educational materials for this topic.</p>
             </div>
-            
             {!completed && (
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <Button onClick={handleMarkComplete} size="lg">
@@ -136,13 +130,12 @@ export function LessonPage() {
         )}
 
         {lesson.type === 'quiz' && lesson.questions && (
-          <QuizComponent 
-            questions={lesson.questions} 
+          <QuizComponent
+            questions={lesson.questions}
             onComplete={handleQuizComplete}
           />
         )}
 
-        {/* Navigation */}
         <div className="flex items-center justify-between mt-8">
           <Button
             variant="outline"
@@ -153,10 +146,7 @@ export function LessonPage() {
             Previous
           </Button>
 
-          <Link 
-            to={`/course/${courseId}/unit/${unitId}`}
-            className="text-blue-600 hover:underline"
-          >
+          <Link to={`/course/${courseId}/unit/${unitId}`} className="text-blue-600 hover:underline">
             Back to Unit
           </Link>
 
