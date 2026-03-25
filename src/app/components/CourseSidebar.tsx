@@ -1,7 +1,8 @@
 import { Link, useParams } from 'react-router';
 import { Progress } from '../components/ui/progress';
-import { getCourseById, getUnitById } from '../data/courses';
+import { getCourseById } from '../data/courses';
 import { getUnitProgress } from '../data/progress';
+import { useEffect, useState } from 'react';
 
 interface CourseSidebarProps {
   isOpen?: boolean;
@@ -11,21 +12,34 @@ interface CourseSidebarProps {
 export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
   const { courseId, unitId } = useParams();
   const course = getCourseById(courseId || '');
+  const [unitProgressMap, setUnitProgressMap] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (!course) return;
+    const fetchProgress = async () => {
+      const progressMap: Record<string, number> = {};
+      await Promise.all(
+        course.units.map(async (unit) => {
+          const progress = await getUnitProgress(unit.lessons.map(l => l.id));
+          progressMap[unit.id] = progress;
+        })
+      );
+      setUnitProgressMap(progressMap);
+    };
+    fetchProgress();
+  }, [course]);
 
   if (!course) return null;
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={onClose}
         />
       )}
-
-      {/* Sidebar */}
-      <aside 
+      <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-50
           w-80 bg-white border-r border-gray-200
@@ -37,8 +51,7 @@ export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
         style={{ top: '60px', height: 'calc(100vh - 60px)' }}
       >
         <div className="p-6">
-          {/* Course Header */}
-          <Link 
+          <Link
             to={`/course/${course.id}`}
             className="flex items-start gap-3 mb-6 hover:bg-gray-50 p-3 -m-3 rounded"
           >
@@ -51,20 +64,18 @@ export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
             </div>
           </Link>
 
-          {/* Units List */}
           <nav className="space-y-1">
             {course.units.map((unit, index) => {
               const isActive = unit.id === unitId;
-              const unitProgress = getUnitProgress(unit.lessons.map(l => l.id));
-
+              const unitProgress = unitProgressMap[unit.id] || 0;
               return (
                 <div key={unit.id}>
                   <Link
                     to={`/course/${course.id}/unit/${unit.id}`}
                     className={`
                       block px-3 py-3 rounded transition-colors
-                      ${isActive 
-                        ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-700 -ml-[1px]' 
+                      ${isActive
+                        ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-700 -ml-[1px]'
                         : 'hover:bg-gray-50 text-gray-700'
                       }
                     `}

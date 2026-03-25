@@ -3,6 +3,8 @@ import { Header } from '../components/Header';
 import { courses } from '../data/courses';
 import { ArrowRight, BookOpen, Target, Shield, Brain } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { getCourseProgress } from '../data/progress';
+import { useEffect, useState } from 'react';
 
 export function HomePage() {
   const icons = {
@@ -12,10 +14,27 @@ export function HomePage() {
     '🧠': Brain,
   };
 
+  const [courseProgressMap, setCourseProgressMap] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      const progressMap: Record<string, number> = {};
+      await Promise.all(
+        courses.map(async (course) => {
+          const totalLessons = course.units.reduce((acc, unit) => acc + unit.lessons.length, 0);
+          const progress = await getCourseProgress(course.id, totalLessons);
+          progressMap[course.id] = progress;
+        })
+      );
+      setCourseProgressMap(progressMap);
+    };
+    fetchProgress();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -23,7 +42,7 @@ export function HomePage() {
             Learn to Trade with Confidence
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            A structured, progressive learning platform for trading education. 
+            A structured, progressive learning platform for trading education.
             Master financial markets through clear lessons, interactive quizzes, and a proven curriculum.
           </p>
           <div className="flex gap-4 justify-center">
@@ -50,7 +69,7 @@ export function HomePage() {
               Follow a clear progression from beginner to intermediate concepts with organized modules and lessons.
             </p>
           </div>
-          
+
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
               <Target className="w-6 h-6 text-green-600" />
@@ -60,7 +79,7 @@ export function HomePage() {
               Test your knowledge with quizzes after each section to reinforce learning and track progress.
             </p>
           </div>
-          
+
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
               <Shield className="w-6 h-6 text-purple-600" />
@@ -78,7 +97,10 @@ export function HomePage() {
           <div className="grid md:grid-cols-2 gap-6">
             {courses.map((course) => {
               const IconComponent = icons[course.icon as keyof typeof icons] || BookOpen;
-              
+              const progress = courseProgressMap[course.id] || 0;
+              const totalLessons = course.units.reduce((acc, unit) => acc + unit.lessons.length, 0);
+              const completedLessons = Math.round((progress / 100) * totalLessons);
+
               return (
                 <Link
                   key={course.id}
@@ -94,10 +116,23 @@ export function HomePage() {
                         {course.title}
                       </h3>
                       <p className="text-gray-600 mb-3">{course.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                         <span>{course.units.length} Units</span>
                         <span>·</span>
                         <span>{course.skillsCount} Skills</span>
+                      </div>
+                      {/* Progress Bar */}
+                      <div>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>{progress > 0 ? `${completedLessons} of ${totalLessons} lessons complete` : 'Not started'}</span>
+                          <span>{progress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0 mt-1" />
@@ -115,25 +150,25 @@ export function HomePage() {
             <div>
               <h3 className="text-xl font-semibold mb-3">The Problem</h3>
               <p className="text-gray-600 mb-4">
-                Learning to trade is difficult due to fragmented information, misleading content, 
-                and the absence of structured educational resources. Most aspiring traders rely on 
+                Learning to trade is difficult due to fragmented information, misleading content,
+                and the absence of structured educational resources. Most aspiring traders rely on
                 unverified sources and trial-and-error approaches.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-3">The Solution</h3>
               <p className="text-gray-600 mb-4">
-                Instinct provides a clear, progressive learning path modeled after proven educational 
-                platforms. Learn trading concepts systematically, from fundamentals to advanced strategies, 
+                Instinct provides a clear, progressive learning path modeled after proven educational
+                platforms. Learn trading concepts systematically, from fundamentals to advanced strategies,
                 with emphasis on discipline and responsible trading.
               </p>
             </div>
           </div>
-          
+
           <div className="mt-8 pt-8 border-t border-gray-200">
             <p className="text-sm text-gray-500 italic">
-              <strong>Important:</strong> This platform is for educational purposes only. 
-              It does not execute trades or provide financial advice. Always conduct your own 
+              <strong>Important:</strong> This platform is for educational purposes only.
+              It does not execute trades or provide financial advice. Always conduct your own
               research and consider consulting with a financial advisor before making investment decisions.
             </p>
           </div>
