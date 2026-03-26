@@ -10,6 +10,7 @@ import { MarketPage } from './pages/MarketPage';
 import { CourseLayout } from './components/CourseLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { JournalPage } from './pages/JournalPage';
+import { TradeLogPage } from './pages/TradeLogPage';
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,14 @@ export const router = createBrowserRouter([
   element:  (
     <ProtectedRoute>
       <JournalPage />
+    </ProtectedRoute>
+    )
+  },
+  {
+  path: '/trades',
+  element: (
+    <ProtectedRoute>
+      <TradeLogPage />
     </ProtectedRoute>
     )
   },

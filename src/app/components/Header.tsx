@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router';
-import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon, BookOpen } from 'lucide-react';
+import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon, BookOpen, DollarSign } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { courses } from '../data/courses';
 import { supabase } from '../lib/supabase';
@@ -154,7 +154,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
               <ChevronDown className="w-4 h-4" />
             </button>
             {showCoursesDropdown && (
-              <div className="absolute left-0 top-full w-80 bg-gray-800 border border-gray-600 rounded-md z-100 mt-1 shadow-lg">
+              <div className="absolute left-0 top-full w-80 bg-gray-800 border border-gray-600 rounded-md z-[100] mt-1 shadow-lg">
                 {courses.map(course => (
                   <div
                     key={course.id}
@@ -189,6 +189,14 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
           >
             <BookOpen className="w-4 h-4" />
             <span>Journal</span>
+          </button>
+
+          <button
+            onClick={() => navigate('/trades')}
+            className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
+          >
+            <DollarSign className="w-4 h-4" />
+            <span>Trades</span>
           </button>
         </div>
 
