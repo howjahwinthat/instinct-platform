@@ -6,6 +6,7 @@ import { LessonPage } from './pages/LessonPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { MarketPage } from './pages/MarketPage';
 import { CourseLayout } from './components/CourseLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -31,6 +32,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <DashboardPage />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/market',
+    element: (
+      <ProtectedRoute>
+        <MarketPage />
       </ProtectedRoute>
     )
   },
