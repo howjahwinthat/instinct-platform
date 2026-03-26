@@ -9,11 +9,20 @@ import { DashboardPage } from './pages/DashboardPage';
 import { MarketPage } from './pages/MarketPage';
 import { CourseLayout } from './components/CourseLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { JournalPage } from './pages/JournalPage';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+  path: '/journal',
+  element:  (
+    <ProtectedRoute>
+      <JournalPage />
+    </ProtectedRoute>
+    )
   },
   {
     path: '/signup',

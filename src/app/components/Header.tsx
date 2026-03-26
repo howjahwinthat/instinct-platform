@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router';
-import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon } from 'lucide-react';
+import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon, BookOpen } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { courses } from '../data/courses';
 import { supabase } from '../lib/supabase';
@@ -182,6 +182,14 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
             <BarChart2 className="w-4 h-4" />
             <span>Market</span>
           </button>
+
+          <button
+            onClick={() => navigate('/journal')}
+            className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Journal</span>
+          </button>
         </div>
 
         <div className="flex-1 max-w-md mx-4 hidden sm:block">
@@ -242,7 +250,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Dark mode toggle */}
           <button
             onClick={toggleTheme}
             className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
