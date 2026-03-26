@@ -42,7 +42,7 @@ export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-50
-          w-80 bg-white border-r border-gray-200
+          w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700
           transform transition-transform duration-200 ease-in-out
           lg:transform-none
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -53,14 +53,14 @@ export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
         <div className="p-6">
           <Link
             to={`/course/${course.id}`}
-            className="flex items-start gap-3 mb-6 hover:bg-gray-50 p-3 -m-3 rounded"
+            className="flex items-start gap-3 mb-6 hover:bg-gray-50 dark:hover:bg-gray-800 p-3 -m-3 rounded"
           >
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+            <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
               {course.icon}
             </div>
             <div>
-              <h2 className="font-semibold text-base">{course.title}</h2>
-              <p className="text-sm text-gray-600">{course.units.length} UNITS · {course.skillsCount} SKILLS</p>
+              <h2 className="font-semibold text-base text-gray-900 dark:text-white">{course.title}</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{course.units.length} UNITS · {course.skillsCount} SKILLS</p>
             </div>
           </Link>
 
@@ -75,12 +75,12 @@ export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
                     className={`
                       block px-3 py-3 rounded transition-colors
                       ${isActive
-                        ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-700 -ml-[1px]'
-                        : 'hover:bg-gray-50 text-gray-700'
+                        ? 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-l-4 border-blue-700 dark:border-blue-400 -ml-[1px]'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                       }
                     `}
                   >
-                    <div className="text-xs text-gray-500 font-medium mb-1">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">
                       UNIT {index + 1}
                     </div>
                     <div className="font-medium text-sm">{unit.title}</div>
