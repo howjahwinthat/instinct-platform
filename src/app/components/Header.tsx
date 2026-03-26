@@ -154,7 +154,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
               <ChevronDown className="w-4 h-4" />
             </button>
             {showCoursesDropdown && (
-              <div className="absolute left-0 top-full w-80 bg-gray-800 border border-gray-600 rounded-md z-10 mt-1 shadow-lg">
+              <div className="absolute left-0 top-full w-80 bg-gray-800 border border-gray-600 rounded-md z-100 mt-1 shadow-lg">
                 {courses.map(course => (
                   <div
                     key={course.id}

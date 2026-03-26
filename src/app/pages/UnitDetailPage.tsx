@@ -37,25 +37,25 @@ export function UnitDetailPage() {
           {course.title}
         </Link>
         <span className="text-gray-400">›</span>
-        <span className="text-gray-600">{unit.title}</span>
+        <span className="text-gray-600 dark:text-gray-400">{unit.title}</span>
       </nav>
 
       <div className="mb-8">
-        <div className="text-sm font-medium text-gray-500 mb-2">
+        <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
           UNIT {course.units.findIndex(u => u.id === unit.id) + 1}
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">{unit.title}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{unit.title}</h1>
       </div>
 
-      <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-3">About this unit</h2>
-        <p className="text-gray-700 leading-relaxed">{unit.description}</p>
+      <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">About this unit</h2>
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{unit.description}</p>
       </div>
 
       {unit.lessons.some(l => l.type === 'article' || l.type === 'video') && (
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Learn</h2>
-          <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Learn</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
             {unit.lessons
               .filter(lesson => lesson.type === 'article' || lesson.type === 'video')
               .map(lesson => {
@@ -64,22 +64,22 @@ export function UnitDetailPage() {
                   <Link
                     key={lesson.id}
                     to={`/course/${courseId}/unit/${unitId}/lesson/${lesson.id}`}
-                    className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex-shrink-0">
                       {completed ? (
                         <CheckCircle className="w-5 h-5 text-green-600" />
                       ) : (
-                        <Circle className="w-5 h-5 text-gray-300" />
+                        <Circle className="w-5 h-5 text-gray-300 dark:text-gray-600" />
                       )}
                     </div>
-                    <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
-                      <Play className="w-5 h-5 text-gray-600" />
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center flex-shrink-0">
+                      <Play className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{lesson.title}</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-white">{lesson.title}</h3>
                       {lesson.duration && (
-                        <p className="text-sm text-gray-500">{lesson.duration} min</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{lesson.duration} min</p>
                       )}
                     </div>
                   </Link>
@@ -91,8 +91,8 @@ export function UnitDetailPage() {
 
       {unit.lessons.some(l => l.type === 'quiz') && (
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Practice</h2>
-          <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Practice</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
             {unit.lessons
               .filter(lesson => lesson.type === 'quiz')
               .map(lesson => {
@@ -101,22 +101,22 @@ export function UnitDetailPage() {
                   <Link
                     key={lesson.id}
                     to={`/course/${courseId}/unit/${unitId}/lesson/${lesson.id}`}
-                    className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex-shrink-0">
                       {completed ? (
                         <CheckCircle className="w-5 h-5 text-green-600" />
                       ) : (
-                        <Circle className="w-5 h-5 text-gray-300" />
+                        <Circle className="w-5 h-5 text-gray-300 dark:text-gray-600" />
                       )}
                     </div>
-                    <div className="w-10 h-10 bg-purple-100 rounded flex items-center justify-center flex-shrink-0">
-                      <span className="text-purple-600 font-semibold text-sm">Q</span>
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded flex items-center justify-center flex-shrink-0">
+                      <span className="text-purple-600 dark:text-purple-300 font-semibold text-sm">Q</span>
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{lesson.title}</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-white">{lesson.title}</h3>
                       {lesson.questions && (
-                        <p className="text-sm text-gray-500">{lesson.questions.length} questions</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{lesson.questions.length} questions</p>
                       )}
                     </div>
                   </Link>

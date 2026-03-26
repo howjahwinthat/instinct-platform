@@ -42,7 +42,7 @@ export function CourseSidebar({ isOpen = true, onClose }: CourseSidebarProps) {
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-50
-          w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700
+          w-60 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700
           transform transition-transform duration-200 ease-in-out
           lg:transform-none
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
