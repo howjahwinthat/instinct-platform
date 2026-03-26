@@ -6,6 +6,7 @@ import { MarkdownRenderer } from '../components/MarkdownRenderer';
 import { Button } from '../components/ui/button';
 import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { updateStreak } from '../lib/streak';
 
 export function LessonPage() {
   const { courseId, unitId, lessonId } = useParams();
@@ -29,9 +30,10 @@ export function LessonPage() {
   const prevLesson = unit.lessons[currentLessonIndex - 1];
 
   const handleMarkComplete = async () => {
-    if (lesson.id) {
-      await markLessonComplete(lesson.id, courseId || '', unitId || '');
-      setCompleted(true);
+  if (lesson.id) {
+    await markLessonComplete(lesson.id, courseId || '', unitId || '');
+    await updateStreak();
+    setCompleted(true);
     }
   };
 

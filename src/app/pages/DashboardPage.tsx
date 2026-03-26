@@ -5,12 +5,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { getUserProgress, getCourseProgress } from '../data/progress';
 import { courses } from '../data/courses';
 import { CheckCircle, BookOpen, Brain, Trophy, TrendingUp } from 'lucide-react';
+import { getStreak } from '../lib/streak';
 
 export function DashboardPage() {
   const { profile } = useAuth();
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [quizScores, setQuizScores] = useState<Record<string, number>>({});
   const [courseProgressMap, setCourseProgressMap] = useState<Record<string, number>>({});
+  const [streak, setStreak] = useState<{ current_streak: number; longest_streak: number } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,9 @@ export function DashboardPage() {
         })
       );
       setCourseProgressMap(progressMap);
+
+      const streakData = await getStreak();
+      setStreak(streakData);
     };
     fetchData();
   }, []);
@@ -49,7 +54,7 @@ export function DashboardPage() {
           <p className="text-gray-500 dark:text-gray-400 mt-2">Here's your learning progress at a glance.</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-3">
               <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -84,6 +89,21 @@ export function DashboardPage() {
               {courses.filter(c => courseProgressMap[c.id] === 100).length}
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Courses Completed</div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mb-3">
+              <span className="text-xl">🔥</span>
+            </div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
+              {streak?.current_streak || 0}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Day Streak</div>
+            {streak && streak.longest_streak > 0 && (
+              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                Best: {streak.longest_streak} days
+              </div>
+            )}
           </div>
         </div>
 
