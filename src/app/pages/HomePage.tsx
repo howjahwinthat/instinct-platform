@@ -32,16 +32,16 @@ export function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Learn to Trade with Confidence
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8">
             A structured, progressive learning platform for trading education.
             Master financial markets through clear lessons, interactive quizzes, and a proven curriculum.
           </p>
@@ -60,32 +60,32 @@ export function HomePage() {
 
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-4">
+              <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Structured Learning Path</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Structured Learning Path</h3>
+            <p className="text-gray-600 dark:text-gray-400">
               Follow a clear progression from beginner to intermediate concepts with organized modules and lessons.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <Target className="w-6 h-6 text-green-600" />
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-4">
+              <Target className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Interactive Quizzes</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Interactive Quizzes</h3>
+            <p className="text-gray-600 dark:text-gray-400">
               Test your knowledge with quizzes after each section to reinforce learning and track progress.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-purple-600" />
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-4">
+              <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Risk-First Approach</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Risk-First Approach</h3>
+            <p className="text-gray-600 dark:text-gray-400">
               Learn responsible trading with emphasis on risk management, discipline, and long-term thinking.
             </p>
           </div>
@@ -93,7 +93,7 @@ export function HomePage() {
 
         {/* Courses */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">Learning Paths</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Learning Paths</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {courses.map((course) => {
               const IconComponent = icons[course.icon as keyof typeof icons] || BookOpen;
@@ -105,29 +105,28 @@ export function HomePage() {
                 <Link
                   key={course.id}
                   to={`/course/${course.id}`}
-                  className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200 dark:border-gray-700"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
                       <IconComponent className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                         {course.title}
                       </h3>
-                      <p className="text-gray-600 mb-3">{course.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                      <p className="text-gray-600 dark:text-gray-400 mb-3">{course.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
                         <span>{course.units.length} Units</span>
                         <span>·</span>
                         <span>{course.skillsCount} Skills</span>
                       </div>
-                      {/* Progress Bar */}
                       <div>
-                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
                           <span>{progress > 0 ? `${completedLessons} of ${totalLessons} lessons complete` : 'Not started'}</span>
                           <span>{progress}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-500"
                             style={{ width: `${progress}%` }}
@@ -144,20 +143,20 @@ export function HomePage() {
         </div>
 
         {/* Why Section */}
-        <div className="bg-white rounded-lg shadow-sm p-8 md:p-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Instinct?</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 md:p-12">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Why Instinct?</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-xl font-semibold mb-3">The Problem</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">The Problem</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Learning to trade is difficult due to fragmented information, misleading content,
                 and the absence of structured educational resources. Most aspiring traders rely on
                 unverified sources and trial-and-error approaches.
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-3">The Solution</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">The Solution</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Instinct provides a clear, progressive learning path modeled after proven educational
                 platforms. Learn trading concepts systematically, from fundamentals to advanced strategies,
                 with emphasis on discipline and responsible trading.
@@ -165,8 +164,8 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-gray-200">
-            <p className="text-sm text-gray-500 italic">
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
               <strong>Important:</strong> This platform is for educational purposes only.
               It does not execute trades or provide financial advice. Always conduct your own
               research and consider consulting with a financial advisor before making investment decisions.

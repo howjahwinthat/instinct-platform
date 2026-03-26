@@ -1,9 +1,10 @@
 import { Link, useNavigate } from 'react-router';
-import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2 } from 'lucide-react';
+import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { courses } from '../data/courses';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -24,6 +25,7 @@ interface SearchResult {
 export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -173,7 +175,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
             )}
           </div>
 
-          {/* Market Button */}
           <button
             onClick={() => navigate('/market')}
             className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
@@ -241,6 +242,19 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Dark mode toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            title="Toggle dark mode"
+          >
+            {isDark ? (
+              <Sun className="w-5 h-5 text-yellow-400" />
+            ) : (
+              <Moon className="w-5 h-5 text-gray-400" />
+            )}
+          </button>
+
           <div className="relative" ref={userRef}>
             <div
               className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 px-3 py-2 rounded"

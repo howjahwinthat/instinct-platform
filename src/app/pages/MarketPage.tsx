@@ -16,17 +16,16 @@ export function MarketPage() {
   const [selectedSymbol, setSelectedSymbol] = useState('NASDAQ:AAPL');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Market Overview</h1>
-          <p className="text-gray-500 mt-2">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Market Overview</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
             Live stock charts for educational reference only. Click a stock to view its chart.
           </p>
         </div>
 
-        {/* Stock Selector */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
           {STOCKS.map((stock) => (
             <button
@@ -34,19 +33,18 @@ export function MarketPage() {
               onClick={() => setSelectedSymbol(stock.symbol)}
               className={`p-4 rounded-xl border-2 text-left transition-all ${
                 selectedSymbol === stock.symbol
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <div className="font-bold text-gray-900">{stock.symbol.split(':')[1]}</div>
-              <div className="text-xs text-gray-500 mt-1">{stock.name}</div>
+              <div className="font-bold text-gray-900 dark:text-white">{stock.symbol.split(':')[1]}</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stock.name}</div>
             </button>
           ))}
         </div>
 
-        {/* TradingView Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
             {STOCKS.find(s => s.symbol === selectedSymbol)?.name} Chart
           </h2>
           <iframe
@@ -57,7 +55,7 @@ export function MarketPage() {
             allowTransparency={true}
             scrolling="no"
           />
-          <p className="text-xs text-gray-400 mt-3 text-center">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">
             Charts provided by TradingView. For educational purposes only — not financial advice.
           </p>
         </div>
