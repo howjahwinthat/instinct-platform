@@ -37,7 +37,7 @@ export function LoginPage() {
 
       if (data.session) {
         // Successfully logged in
-        navigate('/');
+        navigate('/home');
       }
     } catch (err) {
       console.error('Unexpected login error:', err);

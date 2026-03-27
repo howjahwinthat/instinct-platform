@@ -136,7 +136,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
             </button>
           )}
 
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 hover:opacity-80 mr-2">
+          <button onClick={() => navigate('/home')} className="flex items-center gap-2 hover:opacity-80 mr-2">
             <Lightbulb className="w-8 h-8" />
             <span className="text-xl font-semibold">Instinct</span>
           </button>

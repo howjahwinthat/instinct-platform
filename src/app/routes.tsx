@@ -12,47 +12,28 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { JournalPage } from './pages/JournalPage';
 import { TradeLogPage } from './pages/TradeLogPage';
 import { LeaderboardPage } from './pages/LeaderboardPage';
+import { LandingPage } from './pages/LandingPage';
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
-    element: <LoginPage />
-  },
-  {
-  path: '/leaderboard',
-  element: (
-    <ProtectedRoute>
-      <LeaderboardPage />
-    </ProtectedRoute>
-    )
-  },
-  {
-  path: '/journal',
-  element:  (
-    <ProtectedRoute>
-      <JournalPage />
-    </ProtectedRoute>
-    )
-  },
-  {
-  path: '/trades',
-  element: (
-    <ProtectedRoute>
-      <TradeLogPage />
-    </ProtectedRoute>
-    )
-  },
-  {
-    path: '/signup',
-    element: <SignupPage />
-  },
-  {
     path: '/',
+    element: <LandingPage />
+  },
+  {
+    path: '/home',
     element: (
       <ProtectedRoute>
         <HomePage />
       </ProtectedRoute>
     )
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
+  },
+  {
+    path: '/signup',
+    element: <SignupPage />
   },
   {
     path: '/dashboard',
@@ -67,6 +48,30 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <MarketPage />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/journal',
+    element: (
+      <ProtectedRoute>
+        <JournalPage />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/trades',
+    element: (
+      <ProtectedRoute>
+        <TradeLogPage />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/leaderboard',
+    element: (
+      <ProtectedRoute>
+        <LeaderboardPage />
       </ProtectedRoute>
     )
   },
@@ -95,7 +100,7 @@ export const router = createBrowserRouter([
   {
     path: '*',
     element: (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">404 - Page Not Found</h1>
           <p className="text-gray-600 mb-6">The page you're looking for doesn't exist.</p>
