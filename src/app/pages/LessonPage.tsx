@@ -8,6 +8,8 @@ import { CheckCircle, ChevronLeft, ChevronRight, Save, StickyNote, X } from 'luc
 import { useEffect, useState } from 'react';
 import { updateStreak } from '../lib/streak';
 import { supabase } from '../lib/supabase';
+import { Toast } from '../components/Toast';
+import { fireConfetti, fireSmallConfetti } from '../lib/confetti';
 
 export function LessonPage() {
   const { courseId, unitId, lessonId } = useParams();
@@ -17,6 +19,7 @@ export function LessonPage() {
   const [savingNote, setSavingNote] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [toast, setToast] = useState<{ message: string; emoji: string } | null>(null);
 
   const course = getCourseById(courseId || '');
   const unit = getUnitById(courseId || '', unitId || '');
@@ -62,6 +65,8 @@ export function LessonPage() {
 
     setSavingNote(false);
     setNoteSaved(true);
+    fireSmallConfetti();
+    setToast({ message: 'Notes saved!', emoji: '📝' });
     setTimeout(() => setNoteSaved(false), 2000);
   };
 
@@ -78,6 +83,8 @@ export function LessonPage() {
       await markLessonComplete(lesson.id, courseId || '', unitId || '');
       await updateStreak();
       setCompleted(true);
+      fireConfetti();
+      setToast({ message: 'Lesson Complete! Keep it up! 🚀', emoji: '🎉' });
     }
   };
 
@@ -86,6 +93,15 @@ export function LessonPage() {
       await saveQuizScore(lesson.id, courseId || '', score);
       await updateStreak();
       setCompleted(true);
+      if (score >= 80) {
+        fireConfetti();
+        setToast({ message: `Quiz Crushed! You scored ${score}%!`, emoji: '🏆' });
+      } else if (score >= 60) {
+        fireSmallConfetti();
+        setToast({ message: `Quiz Complete! You scored ${score}%`, emoji: '✅' });
+      } else {
+        setToast({ message: `Quiz done. You scored ${score}% — keep practicing!`, emoji: '💪' });
+      }
     }
   };
 
@@ -114,7 +130,6 @@ export function LessonPage() {
   return (
     <div className="min-h-full bg-gray-50 dark:bg-gray-950">
       <div className="flex">
-        {/* Main Content */}
         <div className={`flex-1 transition-all duration-300 ${showNotes ? 'mr-80' : ''}`}>
           <div className="max-w-4xl mx-auto px-6 py-8">
             <nav className="flex items-center gap-2 text-sm mb-6">
@@ -259,6 +274,15 @@ export function LessonPage() {
           </div>
         )}
       </div>
+
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          emoji={toast.emoji}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
