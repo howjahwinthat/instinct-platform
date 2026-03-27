@@ -53,7 +53,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
   }, []);
 
   useEffect(() => {
-    if (searchQuery.trim().length < 2) {
+    if (searchQuery.trim().length < 1) {
       setSearchResults([]);
       return;
     }
@@ -132,6 +132,25 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
     setMobileMenuOpen(false);
   };
 
+  const highlightMatch = (text: string, query: string) => {
+    if (!query) return <span>{text}</span>;
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) return <span>{text}</span>;
+    return (
+      <span>
+        {text.slice(0, index)}
+        <span className="text-blue-400 font-bold">{text.slice(index, index + query.length)}</span>
+        {text.slice(index + query.length)}
+      </span>
+    );
+  };
+
+  const typeColors: Record<string, string> = {
+    course: 'bg-blue-500',
+    unit: 'bg-purple-500',
+    lesson: 'bg-green-500',
+  };
+
   return (
     <>
       <header className="bg-[#14181c] text-white border-b border-gray-700 relative z-50">
@@ -191,39 +210,57 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="Search courses, lessons..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setShowResults(true)}
-                className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 text-white pl-10 pr-8 py-2 rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
-              {showResults && searchResults.length > 0 && (
-                <div className="absolute left-0 top-full w-full bg-gray-800 border border-gray-600 rounded-b-md z-10 mt-1 shadow-lg max-h-96 overflow-y-auto">
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(''); setShowResults(false); }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+
+              {showResults && searchQuery && searchResults.length > 0 && (
+                <div className="absolute left-0 top-full w-full bg-gray-900 border border-gray-700 rounded-xl z-[100] mt-2 shadow-2xl max-h-96 overflow-y-auto">
+                  <div className="px-3 py-2 border-b border-gray-800">
+                    <span className="text-xs text-gray-500">{searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{searchQuery}"</span>
+                  </div>
                   {searchResults.map((result) => (
                     <div
                       key={result.path}
-                      className="px-4 py-3 cursor-pointer hover:bg-gray-700 border-b border-gray-700 last:border-b-0"
+                      className="px-4 py-3 cursor-pointer hover:bg-gray-800 border-b border-gray-800 last:border-b-0 transition-colors"
                       onClick={() => handleResultClick(result.path)}
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-0.5 bg-blue-600 rounded text-white uppercase">{result.type}</span>
-                        <div className="text-sm">
-                          {result.type === 'course' && <span className="font-medium">{result.courseName}</span>}
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs px-2 py-0.5 ${typeColors[result.type]} rounded-full text-white uppercase font-medium flex-shrink-0`}>
+                          {result.type}
+                        </span>
+                        <div className="text-sm min-w-0">
+                          {result.type === 'course' && (
+                            <span className="font-medium text-white">
+                              {highlightMatch(result.courseName, searchQuery)}
+                            </span>
+                          )}
                           {result.type === 'unit' && (
-                            <>
-                              <span className="text-gray-400">{result.courseName}</span>
-                              <span className="mx-1 text-gray-500">›</span>
-                              <span className="font-medium">{result.unitName}</span>
-                            </>
+                            <div>
+                              <span className="font-medium text-white">
+                                {highlightMatch(result.unitName || '', searchQuery)}
+                              </span>
+                              <span className="text-gray-500 text-xs ml-2">in {result.courseName}</span>
+                            </div>
                           )}
                           {result.type === 'lesson' && (
-                            <>
-                              <span className="text-gray-400">{result.courseName}</span>
-                              <span className="mx-1 text-gray-500">›</span>
-                              <span className="text-gray-400">{result.unitName}</span>
-                              <span className="mx-1 text-gray-500">›</span>
-                              <span className="font-medium">{result.lessonName}</span>
-                            </>
+                            <div>
+                              <span className="font-medium text-white">
+                                {highlightMatch(result.lessonName || '', searchQuery)}
+                              </span>
+                              <span className="text-gray-500 text-xs ml-2">in {result.unitName}</span>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -231,15 +268,19 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
                   ))}
                 </div>
               )}
-              {showResults && searchQuery.trim().length >= 2 && searchResults.length === 0 && (
-                <div className="absolute left-0 top-full w-full bg-gray-800 border border-gray-600 rounded-b-md z-10 mt-1 shadow-lg">
-                  <div className="px-4 py-3 text-sm text-gray-400">No results found for "{searchQuery}"</div>
+
+              {showResults && searchQuery.trim().length >= 1 && searchResults.length === 0 && (
+                <div className="absolute left-0 top-full w-full bg-gray-900 border border-gray-700 rounded-xl z-[100] mt-2 shadow-2xl">
+                  <div className="px-4 py-6 text-center">
+                    <Search className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                    <div className="text-sm text-gray-400">No results for "{searchQuery}"</div>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* RIGHT: Trades + Leaderboard + Dark mode + User + Hamburger */}
+          {/* RIGHT */}
           <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
             <button onClick={() => navigate('/trades')} className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded">
               <DollarSign className="w-4 h-4" />
@@ -301,7 +342,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
               )}
             </div>
 
-            {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 hover:bg-gray-700 rounded"
@@ -314,7 +354,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#14181c] border-t border-gray-700 px-4 py-4 space-y-1">
-            {/* Search */}
             <div className="relative mb-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -322,17 +361,17 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
                 placeholder="Search lessons..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500"
               />
               {searchResults.length > 0 && (
-                <div className="absolute left-0 top-full w-full bg-gray-800 border border-gray-600 rounded-b-md z-10 mt-1 shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute left-0 top-full w-full bg-gray-900 border border-gray-700 rounded-xl z-10 mt-1 shadow-lg max-h-60 overflow-y-auto">
                   {searchResults.map((result) => (
                     <div
                       key={result.path}
-                      className="px-4 py-3 cursor-pointer hover:bg-gray-700 border-b border-gray-700 last:border-b-0"
+                      className="px-4 py-3 cursor-pointer hover:bg-gray-800 border-b border-gray-800 last:border-b-0"
                       onClick={() => handleResultClick(result.path)}
                     >
-                      <div className="text-sm text-white">{result.lessonName || result.unitName || result.courseName}</div>
+                      <div className="text-sm text-white font-medium">{result.lessonName || result.unitName || result.courseName}</div>
                       <div className="text-xs text-gray-400">{result.courseName}</div>
                     </div>
                   ))}
@@ -340,7 +379,6 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
               )}
             </div>
 
-            {/* Nav links */}
             {[
               { icon: BookOpen, label: 'Courses', path: '/course/trading-fundamentals' },
               { icon: BarChart2, label: 'Market', path: '/market' },
