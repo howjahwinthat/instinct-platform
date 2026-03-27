@@ -11,11 +11,20 @@ import { CourseLayout } from './components/CourseLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { JournalPage } from './pages/JournalPage';
 import { TradeLogPage } from './pages/TradeLogPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+  path: '/leaderboard',
+  element: (
+    <ProtectedRoute>
+      <LeaderboardPage />
+    </ProtectedRoute>
+    )
   },
   {
   path: '/journal',

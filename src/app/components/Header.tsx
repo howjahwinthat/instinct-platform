@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router';
-import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon, BookOpen, DollarSign } from 'lucide-react';
+import { Search, Menu, ChevronDown, Lightbulb, LogOut, User, BarChart2, Sun, Moon, BookOpen, DollarSign, Trophy } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { courses } from '../data/courses';
 import { supabase } from '../lib/supabase';
@@ -126,21 +126,17 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
 
   return (
     <header className="bg-[#14181c] text-white border-b border-gray-700">
-      <div className="flex items-center justify-between px-4 h-[60px]">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center px-4 h-[60px] gap-4">
+
+        {/* LEFT: Logo + Nav */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           {showMenuButton && (
-            <button
-              onClick={onMenuClick}
-              className="lg:hidden p-2 hover:bg-gray-700 rounded"
-            >
+            <button onClick={onMenuClick} className="lg:hidden p-2 hover:bg-gray-700 rounded">
               <Menu className="w-5 h-5" />
             </button>
           )}
 
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 hover:opacity-80"
-          >
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 hover:opacity-80 mr-2">
             <Lightbulb className="w-8 h-8" />
             <span className="text-xl font-semibold">Instinct</span>
           </button>
@@ -175,33 +171,20 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
             )}
           </div>
 
-          <button
-            onClick={() => navigate('/market')}
-            className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
-          >
+          <button onClick={() => navigate('/market')} className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded">
             <BarChart2 className="w-4 h-4" />
             <span>Market</span>
           </button>
 
-          <button
-            onClick={() => navigate('/journal')}
-            className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
-          >
+          <button onClick={() => navigate('/journal')} className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded">
             <BookOpen className="w-4 h-4" />
             <span>Journal</span>
           </button>
-
-          <button
-            onClick={() => navigate('/trades')}
-            className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
-          >
-            <DollarSign className="w-4 h-4" />
-            <span>Trades</span>
-          </button>
         </div>
 
-        <div className="flex-1 max-w-md mx-4 hidden sm:block">
-          <div className="relative" ref={searchRef}>
+        {/* CENTER: Search */}
+        <div className="flex-1 flex justify-center px-4 hidden sm:block">
+          <div className="relative w-full max-w-md mx-auto" ref={searchRef}>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
@@ -222,9 +205,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
                     <div className="flex items-center gap-2">
                       <span className="text-xs px-2 py-0.5 bg-blue-600 rounded text-white uppercase">{result.type}</span>
                       <div className="text-sm">
-                        {result.type === 'course' && (
-                          <span className="font-medium">{result.courseName}</span>
-                        )}
+                        {result.type === 'course' && <span className="font-medium">{result.courseName}</span>}
                         {result.type === 'unit' && (
                           <>
                             <span className="text-gray-400">{result.courseName}</span>
@@ -249,15 +230,24 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
             )}
             {showResults && searchQuery.trim().length >= 2 && searchResults.length === 0 && (
               <div className="absolute left-0 top-full w-full bg-gray-800 border border-gray-600 rounded-b-md z-10 mt-1 shadow-lg">
-                <div className="px-4 py-3 text-sm text-gray-400">
-                  No results found for "{searchQuery}"
-                </div>
+                <div className="px-4 py-3 text-sm text-gray-400">No results found for "{searchQuery}"</div>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* RIGHT: Trades + Leaderboard + Dark mode + User */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button onClick={() => navigate('/trades')} className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded">
+            <DollarSign className="w-4 h-4" />
+            <span>Trades</span>
+          </button>
+
+          <button onClick={() => navigate('/leaderboard')} className="hidden md:flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded">
+            <Trophy className="w-4 h-4" />
+            <span>Leaderboard</span>
+          </button>
+
           <button
             onClick={toggleTheme}
             className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
