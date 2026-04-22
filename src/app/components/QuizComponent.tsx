@@ -26,7 +26,6 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
 
   const handleCheckAnswer = () => {
     if (selectedAnswer === null) return;
-
     setShowExplanation(true);
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = selectedAnswer;
@@ -35,8 +34,7 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
 
   const handleNext = () => {
     if (isLastQuestion) {
-      // Calculate score
-      const correctAnswers = answers.filter((answer, index) => 
+      const correctAnswers = answers.filter((answer, index) =>
         answer === questions[index].correctAnswer
       ).length;
       const score = Math.round((correctAnswers / questions.length) * 100);
@@ -58,31 +56,31 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
   };
 
   if (quizComplete) {
-    const correctAnswers = answers.filter((answer, index) => 
+    const correctAnswers = answers.filter((answer, index) =>
       answer === questions[index].correctAnswer
     ).length;
     const score = Math.round((correctAnswers / questions.length) * 100);
 
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <div className="w-20 h-20 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-10 h-10 text-green-600" />
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+          <div className="w-20 h-20 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
-          <p className="text-xl text-gray-600 mb-6">
+          <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Quiz Complete!</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
             Your score: {correctAnswers} / {questions.length} ({score}%)
           </p>
-          
+
           <div className="space-y-2 mb-6 text-left">
             {questions.map((q, index) => (
-              <div key={q.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+              <div key={q.id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded">
                 {answers[index] === q.correctAnswer ? (
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
                 ) : (
-                  <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                  <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
                 )}
-                <span className="text-sm">{q.question}</span>
+                <span className="text-sm text-gray-900 dark:text-gray-200">{q.question}</span>
               </div>
             ))}
           </div>
@@ -99,12 +97,12 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
     <div className="max-w-2xl mx-auto">
       {/* Progress */}
       <div className="mb-6">
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
           <span>Question {currentQuestion + 1} of {questions.length}</span>
           <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <div
             className="bg-blue-600 h-2 rounded-full transition-all"
             style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
           />
@@ -112,8 +110,8 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
       </div>
 
       {/* Question Card */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <h3 className="text-xl font-semibold mb-6">{question.question}</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">{question.question}</h3>
 
         <div className="space-y-3">
           {question.options.map((option, index) => {
@@ -129,17 +127,24 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
                 disabled={showExplanation}
                 className={`
                   w-full text-left p-4 rounded-lg border-2 transition-all
-                  ${showCorrect ? 'border-green-500 bg-green-50' : ''}
-                  ${showIncorrect ? 'border-red-500 bg-red-50' : ''}
-                  ${!showExplanation && isSelected ? 'border-blue-500 bg-blue-50' : ''}
-                  ${!showExplanation && !isSelected ? 'border-gray-200 hover:border-gray-300 hover:bg-gray-50' : ''}
+                  ${showCorrect ? 'border-green-500 bg-green-50 dark:bg-green-900 dark:border-green-500' : ''}
+                  ${showIncorrect ? 'border-red-500 bg-red-50 dark:bg-red-900 dark:border-red-500' : ''}
+                  ${!showExplanation && isSelected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900 dark:border-blue-400' : ''}
+                  ${!showExplanation && !isSelected ? 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600' : ''}
+                  ${showExplanation && !isSelected && !isCorrect ? 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600' : ''}
                   ${showExplanation ? 'cursor-default' : 'cursor-pointer'}
                 `}
               >
                 <div className="flex items-center justify-between">
-                  <span>{option}</span>
-                  {showCorrect && <CheckCircle className="w-5 h-5 text-green-600" />}
-                  {showIncorrect && <XCircle className="w-5 h-5 text-red-600" />}
+                  <span className={`
+                    ${showCorrect ? 'text-green-800 dark:text-green-200' : ''}
+                    ${showIncorrect ? 'text-red-800 dark:text-red-200' : ''}
+                    ${!showCorrect && !showIncorrect ? 'text-gray-900 dark:text-gray-100' : ''}
+                  `}>
+                    {option}
+                  </span>
+                  {showCorrect && <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />}
+                  {showIncorrect && <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />}
                 </div>
               </button>
             );
@@ -147,9 +152,9 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
         </div>
 
         {showExplanation && (
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-2">Explanation</h4>
-            <p className="text-blue-800 text-sm">{question.explanation}</p>
+          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">Explanation</h4>
+            <p className="text-blue-800 dark:text-blue-300 text-sm">{question.explanation}</p>
           </div>
         )}
       </div>
@@ -157,7 +162,7 @@ export function QuizComponent({ questions, onComplete }: QuizComponentProps) {
       {/* Actions */}
       <div className="flex justify-end gap-3">
         {!showExplanation && (
-          <Button 
+          <Button
             onClick={handleCheckAnswer}
             disabled={selectedAnswer === null}
           >
