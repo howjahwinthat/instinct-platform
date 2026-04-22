@@ -26,7 +26,7 @@ export function LessonPage() {
   const lesson = getLessonById(courseId || '', unitId || '', lessonId || '');
 
   useEffect(() => {
-    isLessonComplete(lessonId || '').then(setCompleted);
+    isLessonComplete(lessonId || '', courseId || '').then(setCompleted);
     fetchNote();
   }, [lessonId]);
 
