@@ -3,8 +3,7 @@ import { getCourseById, getUnitById, getLessonById } from '../data/courses';
 import { markLessonComplete, saveQuizScore, isLessonComplete } from '../data/progress';
 import { QuizComponent } from '../components/QuizComponent';
 import { MarkdownRenderer } from '../components/MarkdownRenderer';
-import { Button } from '../components/ui/button';
-import { CheckCircle, ChevronLeft, ChevronRight, Save, StickyNote, X } from 'lucide-react';
+import { CheckCircle, ChevronLeft, ChevronRight, Save, StickyNote, X, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { updateStreak } from '../lib/streak';
 import { supabase } from '../lib/supabase';
@@ -33,36 +32,22 @@ export function LessonPage() {
   const fetchNote = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
     const { data } = await supabase
-      .from('lesson_notes')
-      .select('content')
-      .eq('user_id', user.id)
-      .eq('lesson_id', lessonId)
-      .single();
-
-    if (data) {
-      setNote(data.content);
-    } else {
-      setNote('');
-    }
+      .from('lesson_notes').select('content')
+      .eq('user_id', user.id).eq('lesson_id', lessonId).single();
+    if (data) setNote(data.content);
+    else setNote('');
   };
 
   const handleSaveNote = async () => {
     if (!note.trim()) return;
     setSavingNote(true);
-
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
     await supabase.from('lesson_notes').upsert({
-      user_id: user.id,
-      lesson_id: lessonId,
-      course_id: courseId,
-      content: note,
-      updated_at: new Date().toISOString(),
+      user_id: user.id, lesson_id: lessonId, course_id: courseId,
+      content: note, updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id,lesson_id' });
-
     setSavingNote(false);
     setNoteSaved(true);
     fireSmallConfetti();
@@ -70,9 +55,7 @@ export function LessonPage() {
     setTimeout(() => setNoteSaved(false), 2000);
   };
 
-  if (!course || !unit || !lesson) {
-    return <Navigate to="/" replace />;
-  }
+  if (!course || !unit || !lesson) return <Navigate to="/" replace />;
 
   const currentLessonIndex = unit.lessons.findIndex(l => l.id === lesson.id);
   const nextLesson = unit.lessons[currentLessonIndex + 1];
@@ -111,163 +94,346 @@ export function LessonPage() {
     } else {
       const currentUnitIndex = course.units.findIndex(u => u.id === unitId);
       const nextUnit = course.units[currentUnitIndex + 1];
-      if (nextUnit) {
-        navigate(`/course/${courseId}/unit/${nextUnit.id}`);
-      } else {
-        navigate(`/course/${courseId}`);
-      }
+      if (nextUnit) navigate(`/course/${courseId}/unit/${nextUnit.id}`);
+      else navigate(`/course/${courseId}`);
     }
   };
 
   const handlePrevious = () => {
-    if (prevLesson) {
-      navigate(`/course/${courseId}/unit/${unitId}/lesson/${prevLesson.id}`);
-    } else {
-      navigate(`/course/${courseId}/unit/${unitId}`);
-    }
+    if (prevLesson) navigate(`/course/${courseId}/unit/${unitId}/lesson/${prevLesson.id}`);
+    else navigate(`/course/${courseId}/unit/${unitId}`);
   };
 
   return (
-    <div className="min-h-full bg-gray-50 dark:bg-gray-950">
-      <div className="flex">
-        <div className={`flex-1 transition-all duration-300 ${showNotes ? 'mr-80' : ''}`}>
-          <div className="max-w-4xl mx-auto px-6 py-8">
-            <nav className="flex items-center gap-2 text-sm mb-6">
-              <Link to="/" className="text-blue-600 hover:underline">Home</Link>
-              <span className="text-gray-400">›</span>
-              <Link to={`/course/${course.id}`} className="text-blue-600 hover:underline">
-                {course.title}
-              </Link>
-              <span className="text-gray-400">›</span>
-              <Link to={`/course/${courseId}/unit/${unitId}`} className="text-blue-600 hover:underline">
-                {unit.title}
-              </Link>
-              <span className="text-gray-400">›</span>
-              <span className="text-gray-600 dark:text-gray-400">{lesson.title}</span>
+    <div style={{ minHeight: '100vh', background: '#080C14', fontFamily: "'DM Sans', sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap');
+
+        .lesson-content {
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.06);
+          border-radius: 16px;
+          padding: 40px;
+          margin-bottom: 20px;
+          color: #CBD5E1;
+          line-height: 1.8;
+          font-size: 15px;
+        }
+        .lesson-content h1, .lesson-content h2, .lesson-content h3 {
+          color: #F1F5F9;
+          font-weight: 700;
+          letter-spacing: -0.3px;
+          margin-top: 28px;
+          margin-bottom: 12px;
+        }
+        .lesson-content h1 { font-size: 24px; }
+        .lesson-content h2 { font-size: 20px; }
+        .lesson-content h3 { font-size: 17px; color: #94A3B8; }
+        .lesson-content p { color: #94A3B8; margin-bottom: 16px; }
+        .lesson-content strong { color: #E2E8F0; font-weight: 600; }
+        .lesson-content ul, .lesson-content ol {
+          color: #94A3B8; padding-left: 20px; margin-bottom: 16px;
+        }
+        .lesson-content li { margin-bottom: 6px; }
+        .lesson-content code {
+          background: rgba(59,130,246,0.1);
+          border: 1px solid rgba(59,130,246,0.2);
+          color: #60A5FA;
+          padding: 2px 6px; border-radius: 4px;
+          font-family: 'DM Mono', monospace; font-size: 13px;
+        }
+        .lesson-content blockquote {
+          border-left: 3px solid #3B82F6;
+          padding-left: 16px;
+          color: #64748B;
+          margin: 16px 0;
+          font-style: italic;
+        }
+        .nav-btn {
+          display: flex; align-items: center; gap: 6px;
+          padding: 10px 18px; border-radius: 10px;
+          font-size: 13px; font-weight: 600;
+          cursor: pointer; transition: all 0.15s ease;
+          border: 1px solid rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.03);
+          color: #94A3B8; text-decoration: none;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .nav-btn:hover {
+          background: rgba(255,255,255,0.06);
+          border-color: rgba(255,255,255,0.12);
+          color: #F1F5F9;
+        }
+        .nav-btn.primary {
+          background: #3B82F6;
+          border-color: #3B82F6;
+          color: white;
+        }
+        .nav-btn.primary:hover { background: #2563EB; }
+        .nav-btn:disabled {
+          opacity: 0.3; cursor: not-allowed;
+        }
+        .complete-btn {
+          display: flex; align-items: center; gap: 8px;
+          padding: 12px 24px; border-radius: 10px;
+          background: linear-gradient(135deg, #10B981, #059669);
+          color: white; border: none; cursor: pointer;
+          font-size: 14px; font-weight: 600;
+          font-family: 'DM Sans', sans-serif;
+          transition: all 0.2s ease;
+          box-shadow: 0 0 20px rgba(16,185,129,0.25);
+        }
+        .complete-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 0 28px rgba(16,185,129,0.35);
+        }
+        .notes-btn {
+          display: flex; align-items: center; gap: 6px;
+          padding: 8px 16px; border-radius: 8px;
+          font-size: 13px; font-weight: 500;
+          cursor: pointer; transition: all 0.15s;
+          border: 1px solid rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.03);
+          color: #64748B; font-family: 'DM Sans', sans-serif;
+        }
+        .notes-btn.active {
+          background: rgba(59,130,246,0.15);
+          border-color: rgba(59,130,246,0.3);
+          color: #3B82F6;
+        }
+        .notes-btn:hover { border-color: rgba(255,255,255,0.14); color: #94A3B8; }
+        .breadcrumb-link {
+          color: #3B82F6; text-decoration: none;
+          font-size: 13px; transition: color 0.15s;
+        }
+        .breadcrumb-link:hover { color: #60A5FA; }
+        .notes-panel {
+          position: fixed; right: 0; top: 60px;
+          height: calc(100vh - 60px); width: 320px;
+          background: #0D1117;
+          border-left: 1px solid rgba(255,255,255,0.06);
+          display: flex; flex-direction: column;
+          z-index: 40;
+          box-shadow: -20px 0 60px rgba(0,0,0,0.4);
+        }
+        .notes-textarea {
+          flex: 1; width: 100%;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 10px;
+          padding: 14px;
+          color: #CBD5E1;
+          font-size: 13px;
+          font-family: 'DM Sans', sans-serif;
+          line-height: 1.6;
+          resize: none;
+          outline: none;
+          transition: border-color 0.15s;
+        }
+        .notes-textarea:focus { border-color: rgba(59,130,246,0.4); }
+        .notes-textarea::placeholder { color: #334155; }
+        .save-notes-btn {
+          width: 100%; display: flex; align-items: center;
+          justify-content: center; gap: 6px;
+          padding: 10px; border-radius: 8px;
+          background: #3B82F6; color: white;
+          border: none; cursor: pointer;
+          font-size: 13px; font-weight: 600;
+          font-family: 'DM Sans', sans-serif;
+          transition: background 0.15s;
+          margin-top: 10px;
+        }
+        .save-notes-btn:hover { background: #2563EB; }
+        .save-notes-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .completed-badge {
+          display: flex; align-items: center; gap: 6px;
+          padding: 6px 14px; border-radius: 8px;
+          background: rgba(16,185,129,0.12);
+          border: 1px solid rgba(16,185,129,0.25);
+          color: #34D399; font-size: 13px; font-weight: 600;
+        }
+        .coming-soon {
+          text-align: center; padding: 60px 20px;
+          color: #475569;
+        }
+      `}</style>
+
+      <div style={{ display: 'flex' }}>
+        {/* Main content */}
+        <div style={{
+          flex: 1,
+          marginRight: showNotes ? 320 : 0,
+          transition: 'margin-right 0.3s ease'
+        }}>
+          <div style={{ maxWidth: 760, margin: '0 auto', padding: '36px 24px' }}>
+
+            {/* Breadcrumb */}
+            <nav style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
+              <a href="/home" className="breadcrumb-link">Home</a>
+              <span style={{ color: '#334155', fontSize: 13 }}>›</span>
+              <a href={`/course/${course.id}`} className="breadcrumb-link">{course.title}</a>
+              <span style={{ color: '#334155', fontSize: 13 }}>›</span>
+              <a href={`/course/${courseId}/unit/${unitId}`} className="breadcrumb-link">{unit.title}</a>
+              <span style={{ color: '#334155', fontSize: 13 }}>›</span>
+              <span style={{ color: '#475569', fontSize: 13 }}>{lesson.title}</span>
             </nav>
 
-            <div className="mb-8">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{lesson.title}</h1>
+            {/* Lesson header */}
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                  <h1 style={{
+                    fontSize: 28, fontWeight: 700, color: '#F1F5F9',
+                    margin: 0, letterSpacing: '-0.6px', lineHeight: 1.2, marginBottom: 8
+                  }}>
+                    {lesson.title}
+                  </h1>
                   {lesson.duration && (
-                    <p className="text-gray-600 dark:text-gray-400">{lesson.duration} minutes</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#475569', fontSize: 13 }}>
+                      <Clock size={13} color="#475569" />
+                      <span>{lesson.duration} min read</span>
+                    </div>
                   )}
                 </div>
-                <div className="flex items-center gap-3">
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   {completed && (
-                    <div className="flex items-center gap-2 text-green-600 bg-green-50 dark:bg-green-900 px-4 py-2 rounded-lg">
-                      <CheckCircle className="w-5 h-5" />
-                      <span className="font-medium">Completed</span>
+                    <div className="completed-badge">
+                      <CheckCircle size={14} color="#34D399" />
+                      <span>Done</span>
                     </div>
                   )}
                   <button
+                    className={`notes-btn ${showNotes ? 'active' : ''}`}
                     onClick={() => setShowNotes(!showNotes)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
-                      showNotes
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-400'
-                    }`}
                   >
-                    <StickyNote className="w-4 h-4" />
-                    <span className="text-sm font-medium">Notes</span>
+                    <StickyNote size={14} />
+                    Notes
                   </button>
                 </div>
               </div>
             </div>
 
+            {/* Article content */}
             {lesson.type === 'article' && lesson.content && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 mb-8">
+              <div className="lesson-content">
                 <MarkdownRenderer content={lesson.content} />
                 {!completed && (
-                  <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <Button onClick={handleMarkComplete} size="lg">
+                  <div style={{
+                    marginTop: 32, paddingTop: 24,
+                    borderTop: '1px solid rgba(255,255,255,0.06)'
+                  }}>
+                    <button className="complete-btn" onClick={handleMarkComplete}>
+                      <CheckCircle size={16} />
                       Mark as Complete
-                      <CheckCircle className="ml-2 w-5 h-5" />
-                    </Button>
+                    </button>
                   </div>
                 )}
               </div>
             )}
 
+            {/* Coming soon */}
             {lesson.type === 'article' && !lesson.content && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 mb-8">
-                <div className="text-center py-12">
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">This lesson content is coming soon.</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500">We're working on creating comprehensive educational materials for this topic.</p>
+              <div className="lesson-content">
+                <div className="coming-soon">
+                  <div style={{ fontSize: 40, marginBottom: 16 }}>🚧</div>
+                  <p style={{ color: '#475569', marginBottom: 6 }}>Content coming soon.</p>
+                  <p style={{ fontSize: 13, color: '#334155' }}>
+                    We're working on comprehensive materials for this topic.
+                  </p>
                 </div>
                 {!completed && (
-                  <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <Button onClick={handleMarkComplete} size="lg">
+                  <div style={{ paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                    <button className="complete-btn" onClick={handleMarkComplete}>
+                      <CheckCircle size={16} />
                       Mark as Complete
-                      <CheckCircle className="ml-2 w-5 h-5" />
-                    </Button>
+                    </button>
                   </div>
                 )}
               </div>
             )}
 
+            {/* Quiz */}
             {lesson.type === 'quiz' && lesson.questions && (
-              <QuizComponent
-                questions={lesson.questions}
-                onComplete={handleQuizComplete}
-              />
+              <div style={{
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 16, padding: 32, marginBottom: 20
+              }}>
+                <QuizComponent
+                  questions={lesson.questions}
+                  onComplete={handleQuizComplete}
+                />
+              </div>
             )}
 
-            <div className="flex items-center justify-between mt-8">
-              <Button
-                variant="outline"
+            {/* Navigation */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
+              <button
+                className="nav-btn"
                 onClick={handlePrevious}
                 disabled={!prevLesson && course.units.findIndex(u => u.id === unitId) === 0}
               >
-                <ChevronLeft className="mr-2 w-4 h-4" />
+                <ChevronLeft size={15} />
                 Previous
-              </Button>
+              </button>
 
-              <Link to={`/course/${courseId}/unit/${unitId}`} className="text-blue-600 hover:underline">
-                Back to Unit
-              </Link>
+              
+                <Link
+  to={`/course/${courseId}/unit/${unitId}`}
+  style={{ color: '#475569', fontSize: 13, textDecoration: 'none', transition: 'color 0.15s' }}
+>
+  ← Back to Unit
+</Link>
 
-              <Button onClick={handleNext}>
+              <button className="nav-btn primary" onClick={handleNext}>
                 {nextLesson ? 'Next Lesson' : 'Complete Unit'}
-                <ChevronRight className="ml-2 w-4 h-4" />
-              </Button>
+                <ChevronRight size={15} />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Notes Side Panel */}
+        {/* Notes panel */}
         {showNotes && (
-          <div className="fixed right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 shadow-xl z-40 flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-2">
-                <StickyNote className="w-5 h-5 text-blue-600" />
-                <h3 className="font-bold text-gray-900 dark:text-white">Lesson Notes</h3>
+          <div className="notes-panel">
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '16px 18px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <StickyNote size={15} color="#3B82F6" />
+                <span style={{ color: '#F1F5F9', fontWeight: 600, fontSize: 14 }}>Lesson Notes</span>
               </div>
               <button
                 onClick={() => setShowNotes(false)}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#475569', padding: 4, borderRadius: 6,
+                  transition: 'color 0.15s'
+                }}
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="p-4 flex-1 flex flex-col">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                Notes for: <span className="font-medium text-gray-700 dark:text-gray-300">{lesson.title}</span>
-              </p>
+            <div style={{ padding: 16, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ color: '#334155', fontSize: 11, marginBottom: 10, fontWeight: 500 }}>
+                {lesson.title}
+              </div>
               <textarea
+                className="notes-textarea"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Write your notes, key takeaways, or questions here..."
-                className="flex-1 w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
               <button
+                className="save-notes-btn"
                 onClick={handleSaveNote}
                 disabled={savingNote || !note.trim()}
-                className="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
               >
-                <Save className="w-4 h-4" />
+                <Save size={13} />
                 {savingNote ? 'Saving...' : noteSaved ? '✓ Saved!' : 'Save Notes'}
               </button>
             </div>
@@ -275,7 +441,6 @@ export function LessonPage() {
         )}
       </div>
 
-      {/* Toast */}
       {toast && (
         <Toast
           message={toast.message}
