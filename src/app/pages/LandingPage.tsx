@@ -3,7 +3,9 @@ import { Lightbulb, BookOpen, Target, Shield, Brain, TrendingUp, CheckCircle, Ba
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0D1117] text-white">
+    <div className="min-h-screen bg-[#0D1117] text-white" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap');`}</style>
+    
 
       {/* Navbar */}
       <nav className="flex items-center justify-between px-6 md:px-16 py-5 border-b border-gray-800">
